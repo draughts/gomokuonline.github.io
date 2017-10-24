@@ -1,65 +1,160 @@
-<?php
-session_save_path(dirname($_SERVER['DOCUMENT_ROOT']) . '/tmp');
-session_start();
-ob_start();
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-$base = "https://en.wikipedia.org"; //SET THIS TO THE URL OF THE WEBSITE THAT YOU WANT TO MIRROR
 
-$ckfile       = '/tmp/cookie-' . session_id();
-$cookiedomain = str_replace("http://www.", "", $base);
-$cookiedomain = str_replace("https://www.", "", $cookiedomain);
-$cookiedomain = str_replace("www.", "", $cookiedomain);
-$url          = $base . $_SERVER['REQUEST_URI'];
-if ($_SERVER['HTTPS'] == 'on') {
-    $mydomain = 'https://' . $_SERVER['HTTP_HOST'];
-} else {
-    $mydomain = 'http://' . $_SERVER['HTTP_HOST'];
-}
-$curlSession = curl_init();
-curl_setopt($curlSession, CURLOPT_URL, $url);
-curl_setopt($curlSession, CURLOPT_HEADER, 1);
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $postinfo = '';
-    foreach ($_POST as $key => $value) {
-        $postinfo .= $key . '=' . urlencode($value) . '&';
-    }
-    rtrim($postinfo, '&');
-    curl_setopt($curlSession, CURLOPT_POST, 1);
-    curl_setopt($curlSession, CURLOPT_POSTFIELDS, $postinfo);
-}
-curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($curlSession, CURLOPT_TIMEOUT, 30);
-curl_setopt($curlSession, CURLOPT_COOKIEJAR, $ckfile);
-curl_setopt($curlSession, CURLOPT_COOKIEFILE, $ckfile);
-foreach ($_COOKIE as $k => $v) {
-    if (is_array($v)) {
-        $v = serialize($v);
-    }
-    curl_setopt($curlSession, CURLOPT_COOKIE, "$k=$v; domain=.$cookiedomain ; path=/");
-}
-$response = curl_exec($curlSession);
-if (curl_error($curlSession)) {
-    print curl_error($curlSession);
-} else {
-    $response  = str_replace("HTTP/1.1 100 Continue\r\n\r\n", "", $response);
-    $ar        = explode("\r\n\r\n", $response, 2);
-    $header    = $ar[0];
-    $body      = $ar[1];
-    $header_ar = split(chr(10), $header);
-    foreach ($header_ar as $k => $v) {
-        if (!preg_match("/^Transfer-Encoding/", $v)) {
-            $v = str_replace($base, $mydomain, $v);
-            header(trim($v));
-        }
-    }
-    $body = str_replace($base, $mydomain, $body);
-    
-    //USE THE REPLACE FUNCTION BELOW TO REPLACE CONTENT/CODE OF THE ORIGIN SITE
-    // eg. $body = str_replace('Welcome to SiteA','Welcome to SiteB', $body);
-    
-    $body = str_replace('REPLACE THIS', 'WITH THIS', $body);
-    $body = str_replace('REPLACE THIS', 'WITH THIS', $body);
-    $body = str_replace('REPLACE THIS', 'WITH THIS', $body);
-    print $body;
-}
-curl_close($curlSession);
+<head>
+<title>Play Gomoku online - Gomoku Game</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="Content-Language" content="en" />
+<meta name="language" content="en"/>
+<meta name="keywords" content="Gomoku, online, play, free, game, board game, Gomoku online, Gomoku game" />
+<meta name="description" content ="Gomoku is a popular free online board game. On this website you can play Gomoku by yourself or compete with a friend." />
+<base  />
+<meta property="og:title" content="Play Gomoku online - Gomoku Game" />
+<meta property="og:type" content="game" />
+<meta property="og:url" content="index.html" />
+<meta property="og:image" content="uartwork/gomoku-logo.png" />
+<meta property="og:description" content="Gomoku is an free online board game. You can play Gomoku now or compete with friends." />
+<meta property="og:site_name" content="Gomoku" />
+<meta property="fb:admins" content=""/>
+<link rel="shortcut icon" href="uartwork/gomoku-favicon.html" />
+<link rel="stylesheet" type="text/css" href="general.css"/>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-88954551-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body>
+<div id="maincontainer">
+<div id="topsection">
+<div class="innertube">
+<table cellspacing="2" cellpadding="1" border="0"><tr>
+<td class="titletd1">
+<a href="index.html"><img src="uartwork/gomoku-logo.png" class="logoimg" alt="gomoku" /></a>
+</td>
+<td class="titletd2">
+<!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style ">
+<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+<a class="addthis_button_tweet"></a>
+<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+<a class="addthis_counter addthis_pill_style"></a>
+</div>
+<script type="text/javascript">var addthis_config = {services_exclude: 'print', data_track_clickback: false, data_use_cookies: false}; </script>
+<!-- AddThis Button END -->
+</td>
+<td class="titletd3">
+<div id="cse-search-form" style="width: 100%;height:24px;">Loading</div>
+</td>
+</tr></table>
+<hr class="hr1" noshade="noshade" />
+</div>
+</div>
+<div id="contentwrapper">
+<div id="contentcolumn">
+<div class="innertube">		<div style="line-height:9px;"><br/></div>
+	<script type="text/javascript"><!--
+google_ad_client = "ca-pub-3711695498099821";
+/* Othello 728x90 */
+google_ad_slot = "2017143857";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="../pagead2.googlesyndication.com/pagead/f.txt">
+</script>	<div style="line-height:22px;"><br/></div>
+		
+		
+		
+		<div>
+	<center><h1>Play Gomoku online</h1></center>
+	</div>
+<p style="margin-left:0px;margin-top:20px;border:0px solid #ffffff;width:600px;height:400px;">
+
+<object width="600" height="400"><param name="movie" value="games/gomoku.swf"/><embed src="games/othello.swf" type="application/x-shockwave-flash" width="600" height="400"></embed></object>
+</p>
+<center><i>Advertisements</i></center>
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-3711695498099821";
+/* Othello 728x90 */
+google_ad_slot = "2017143857";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="../pagead2.googlesyndication.com/pagead/f.txt">
+</script>
+
+<h2>Gomoku</h2>
+Gomoku , from <a href="https://en.wikipedia.org/wiki/Gomoku">Gomoku</a> Narabe ( <i>Kanji  :</i>五目並べ, literally, "  <i>aligning five pieces</i>  ") is the Japanese name of a chinese board game , where he was appointed Wǔzi qí (五子棋, literally, "  <i>the chessboard of 5</i>  ") consisting of aligning 5 pawns on the intersections of the board game of go (or wéiqí, 围棋). You can play gomoku online free, on compete on multiplayers whith friends and family.
+
+It is also known in Europe under the Greek name of " <a title="" href="https://en.wikipedia.org/wiki/Pente">pente</a> " and specifically "Darpion" in France.
+
+Discovered in the last century by the Anglo-Saxons, the gomoku (pronounced "gomokou") has millions of followers in the Far East (China, Korea, Japan). This game of alignment, using the same grid- <i>shaped</i> board as the game of go, has like this Chinese origins: it is the very old game of <i>Wǔzi qí</i> (五子棋, "  <i>the chessboard of the 5</i>  "), adopted by the Koreans, who named it <i>omok</i> (오목). They introduced it in their turn into the Japanese empire, where this relatively simple game was considered a preparatory step to the subtleties of the game of go. A revised version, <i>renju</i>( <i>connected pearls</i> ), was born in 1931 on the initiative of the Japanese championTakagi Rakazan
+<h2>Gomoku rules</h2>
+The gomoku online or on the board is played on a gridded tray of 19 horizontal lines and 19 vertical lines forming, like a game of go, 361 intersections. However, the number of tokens is much lower, since players receive only 60, which they place one by one and in turn on the intersections.
+
+The gomoku player who has chosen or obtained by a draw the black pawns (and who is called Black by convention) always plays first by placing his first pawn on the central intersection of the checkerboard. White must then place his pawn on one of the 8 intersections adjacent to the black pawn. Black does the same, and so on, the goal of the game being to take the opponent's speed and succeed first in aligning 5 pieces of his color in the three possible directions: vertical, horizontal or diagonal.
+<h2>How to play Gomoku</h2>
+If the two gomoku players place all their pawns without any one being able to realize an alignment, the game is declared null, and they start again. A game usually takes place in two heats, so that the one who started with the blacks has the whites the second time.
+
+here is a small gomoku online tutorial (video) to understand how to play the game
+
+<iframe width="600" height="400" src="https://www.youtube.com/embed/TNrPCXVZIZ8" frameborder="0" allowfullscreen></iframe>
+
+&nbsp;
+<h2>Variants of Gomoku</h2>
+The <b><a title="Renju" href="https://en.wikipedia.org/wiki/Renju">renju</a></b> is played on a small-sized game board, with 15 horizontal lines and 15 vertical lines forming 225 intersections. The rules, analogous to those of the gomoku , have undergone some modifications intended to diminish the advantage of the one who plays the first: these are restrictions which therefore concern only Black.
+<ul>
+ 	<li>He is not allowed to make a double series of 3 or 4 pawns aligned or separated by a single intersection (what is called a "three-three" or a "four-four").</li>
+ 	<li>He is also prohibited alignments of more than 5 pieces, for example by joining 2 and 3 or 4 gomoku pieces already in the row to obtain a <i>six</i> or a <i>seven</i> .</li>
+</ul>
+
+
+
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+<div id="footer">
+<br/><br/>
+<hr class="hr1" noshade="noshade" />
+&copy; Copyright 2017 by Gomokuonline.github.io<br/>
+<a href="contact.html" class="link1">Contact Us</a> | <a href="terms-of-use.html" class="link1">Terms of Use</a>
+</div>
+</div>
+<script type="text/javascript" src="../s7.addthis.com/js/300/addthis_widget.js#pubid=hagai2003"></script>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> 
+  google.load('search', '1', {language : 'en', style : google.loader.themes.ESPRESSO});
+  google.setOnLoadCallback(function() {
+    var customSearchOptions = {};  var customSearchControl = new google.search.CustomSearchControl(
+      '003904161240944717949:frqhmb0muro', customSearchOptions);
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.enableSearchboxOnly("search.html");
+    customSearchControl.draw('cse-search-form', options);
+  }, true);
+</script>
+</body>
+
+
+</html>
